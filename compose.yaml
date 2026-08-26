@@ -1,0 +1,27 @@
+services:
+  scheduler:
+    build: .
+    ports:
+      - "${HOST_PORT:-8091}:8091"
+    environment:
+      PORT: "8091"
+      DB_PATH: /app/data/scheduler.db
+      HOUSEHOLD_TIMEZONE: "${HOUSEHOLD_TIMEZONE:-UTC}"
+      GOTIFY_URL: "${GOTIFY_URL:-}"
+      GOTIFY_TOKEN: "${GOTIFY_TOKEN:-}"
+      SMTP_HOST: "${SMTP_HOST:-smtp.gmail.com}"
+      SMTP_PORT: "${SMTP_PORT:-465}"
+      SMTP_USER: "${SMTP_USER:-}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
+      EMAIL_FROM: "${EMAIL_FROM:-}"
+      DEFAULT_EMAIL_TO: "${DEFAULT_EMAIL_TO:-}"
+      DEFAULT_SMS_TO: "${DEFAULT_SMS_TO:-}"
+      SMS_GATEWAY_DOMAIN: "${SMS_GATEWAY_DOMAIN:-vtext.com}"
+    volumes:
+      - scheduler-data:/app/data
+      - scheduler-backups:/app/backups
+    restart: unless-stopped
+
+volumes:
+  scheduler-data:
+  scheduler-backups:

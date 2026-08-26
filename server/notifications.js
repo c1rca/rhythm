@@ -1,0 +1,12 @@
+import nodemailer from 'nodemailer'
+export class Notifier {
+  constructor(env, repo) { this.env=env; this.repo=repo; this.mail=env.SMTP_USER&&env.SMTP_PASSWORD ? nodemailer.createTransport({host:env.SMTP_HOST||'smtp.gmail.com',port:Number(env.SMTP_PORT||465),secure:Number(env.SMTP_PORT||465)===465,auth:{user:env.SMTP_USER,pass:env.SMTP_PASSWORD}}) : null }
+  destinationText(channel) { return this.repo.preference(channel === 'sms' ? 'smsTo' : 'emailTo', channel === 'sms' ? this.env.DEFAULT_SMS_TO : this.env.DEFAULT_EMAIL_TO) }
+  destinations(channel) {
+    const gateway = this.env.SMS_GATEWAY_DOMAIN || 'vtext.com'
+    return [...new Set(this.destinationText(channel).split(/[\n,;]+/).map(value => value.trim().toLowerCase()).map(value => channel === 'sms' && /^\+?1?\D*(\d\D*){10}$/.test(value) ? `${value.replace(/\D/g,'').slice(-10)}@${gateway}` : value).filter(value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)))]
+  }
+  async send(task, channel) { if (!this.repo.markSent(task.id,channel,task.dueAt)) return false; const title=`${task.emoji} ${task.title} is due`; const message=`Time for ${task.title}. Keep the streak alive — you’re on ${task.streak || 0}.`; try { if(channel==='gotify') await fetch(`${this.env.GOTIFY_URL}/message?token=${this.env.GOTIFY_TOKEN}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title,message,priority:5})}); if((channel==='email'||channel==='sms')&&this.mail) await this.mail.sendMail({from:this.env.EMAIL_FROM||this.env.SMTP_USER,to:this.destinations(channel),subject:title,text:message}); return true } catch (e) { console.error(`notification ${channel} failed`,e.message); return false } }
+  async check() { for(const task of this.repo.due()) for(const channel of ['gotify','email','sms']) if(task.channels[channel] && this.configured(channel)) await this.send(task,channel) }
+  configured(channel) { return channel==='gotify'?Boolean(this.env.GOTIFY_URL&&this.env.GOTIFY_TOKEN):Boolean(this.mail&&this.destinations(channel).length) }
+}

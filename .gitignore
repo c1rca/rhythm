@@ -1,0 +1,22 @@
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+
+# Runtime state and backups
+data/
+backups/
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.log
+
+# Local secrets (commit the template only)
+.env*
+!.env.example
+*.pem
+*.key
+
+# Local planning/scratch material
+docs/plans/
