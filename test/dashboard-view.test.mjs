@@ -29,6 +29,13 @@ test('list rows hide the redundant chevron so details and streak controls never 
   assert.match(styles, /\.task-list \.more\{display:none\}/)
 })
 
+test('mobile list completion icon is centered in its 44px tap target', () => {
+  const styles = fs.readFileSync(new URL('../src/palette.css', import.meta.url), 'utf8')
+  assert.match(source, /<Check size=\{17\}\/>\s*<span>Done<\/span>/)
+  assert.match(styles, /\.task-list \.done span\{display:none\}/)
+  assert.match(styles, /\.task-list \.card-bottom\{[^}]*justify-self:center[^}]*place-items:center/)
+})
+
 test('Coming up uses the selected list view instead of a horizontal rail', () => {
   assert.match(source, /view === 'list' \? <TaskCards items=\{coming\}/)
 })

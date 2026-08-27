@@ -27,8 +27,9 @@
   .task-list .task-emoji{width:40px;height:40px;font-size:24px}
   .task-list .due{font-size:9px;letter-spacing:.45px}
   .task-list .task-card h3{font-size:16px;line-height:1.1}
-  .task-list .card-bottom{grid-column:3;margin:0;justify-self:end}
+  .task-list .card-bottom{grid-column:3;margin:0;justify-self:center;display:grid;place-items:center}
   .task-list .done{width:44px;min-width:44px;min-height:44px;padding:0;border-radius:12px;display:grid;place-items:center}
+  .task-list .done span{display:none}
   .task-list .done svg{width:18px;height:18px}
 }
 /* Title entry should feel like direct writing, not a colored input box. */
