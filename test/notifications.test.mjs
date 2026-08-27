@@ -15,3 +15,15 @@ test('SMS destinations normalize plain numbers through the configured gateway do
   const notifier = new Notifier({ SMS_GATEWAY_DOMAIN: 'vtext.com' }, repo)
   assert.deepEqual(notifier.destinations('sms'), [address, 'text@example.invalid'])
 })
+
+test('Twilio SMS targets retain Google Fi-compatible phone numbers instead of carrier-gateway emails', () => {
+  const repo = { preference: key => key === 'smsProvider' ? 'twilio' : '(862) 214-4601, text@example.invalid' }
+  const notifier = new Notifier({}, repo)
+  assert.deepEqual(notifier.smsTargets(), ['+18622144601'])
+})
+
+test('notification content includes the configured Scheduler page link', () => {
+  const repo = { preference: key => key === 'publicUrl' ? 'https://rhythm.example.com/' : '' }
+  const notifier = new Notifier({}, repo)
+  assert.match(notifier.message({ id: 7, title: 'Numbers', streak: 1 }), /https:\/\/rhythm\.example\.com\/\?task=7/)
+})
