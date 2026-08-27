@@ -33,8 +33,9 @@ test('Coming up uses the selected list view instead of a horizontal rail', () =>
   assert.match(source, /view === 'list' \? <TaskCards items=\{coming\}/)
 })
 
-test('creation uses one primary clear-state action, direct row opening, and a custom cron choice', () => {
-  assert.doesNotMatch(source, /add-button compact/)
+test('creation stays available after the first rhythm, with direct row opening and custom cron', () => {
+  assert.match(source, /className="add-button compact"/)
+  assert.match(source, /Add rhythm/)
   assert.doesNotMatch(source, />Add one</)
   assert.doesNotMatch(source, />Details</)
   assert.match(source, /<option value="custom">Custom \(cron\)<\/option>/)
