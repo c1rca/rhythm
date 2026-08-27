@@ -40,3 +40,9 @@ test('creation uses one primary clear-state action, direct row opening, and a cu
   assert.match(source, /<option value="custom">Custom \(cron\)<\/option>/)
   assert.match(source, /aria-label="Custom cron expression"/)
 })
+
+test('dashboard provides a compact, data-grounded household review with calendar and weekly digest', () => {
+  assert.match(source, /Household pulse/)
+  assert.match(source, /insights\.calendar/)
+  assert.match(source, /weekly digest/)
+})

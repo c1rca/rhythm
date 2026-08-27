@@ -133,3 +133,14 @@ test('dashboard separates past due, today, and next using the household calendar
   assert.deepEqual(dashboard.next.map(task => task.title), ['Tomorrow'])
   fs.rmSync(dbPath, { force: true })
 })
+
+test('dashboard exposes household insights from durable action history', () => {
+  fs.rmSync(dbPath, { force: true })
+  const repo = new SchedulerRepository(dbPath)
+  const task = repo.create({ ...sampleTask, unit: 'daily', recurrence: { unit: 'daily', interval: 1 } })
+  repo.recordAction(task.id, 'skipped', '2026-08-25T12:00:00.000Z')
+  const dashboard = repo.dashboard('2026-08-26T12:00:00.000Z')
+  assert.equal(dashboard.insights.calendar.length, 28)
+  assert.equal(dashboard.insights.digest.skipped, 1)
+  fs.rmSync(dbPath, { force: true })
+})
