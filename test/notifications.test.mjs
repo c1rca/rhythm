@@ -27,3 +27,12 @@ test('notification content includes the configured Scheduler page link', () => {
   const notifier = new Notifier({}, repo)
   assert.match(notifier.message({ id: 7, title: 'Numbers', streak: 1 }), /https:\/\/rhythm\.example\.com\/\?task=7/)
 })
+
+test('Twilio failure falls back to carrier-email SMS when enabled', async () => {
+  const repo = { preference: key => ({ smsProvider: 'twilio', smsFallback: 'gateway', smsTo: '(862) 214-4601' })[key] || '' }
+  const notifier = new Notifier({ TWILIO_ACCOUNT_SID: 'sid', TWILIO_AUTH_TOKEN: 'token', TWILIO_FROM: '+15555555555', SMS_GATEWAY_DOMAIN: 'vtext.com' }, repo)
+  const originalFetch = globalThis.fetch, delivered = []
+  globalThis.fetch = async () => { throw new Error('Twilio unavailable') }
+  notifier.mail = { sendMail: async mail => delivered.push(mail) }
+  try { await notifier.sendSms('Reminder'); assert.deepEqual(delivered.map(mail => mail.to), [['8622144601@vtext.com']]) } finally { globalThis.fetch = originalFetch }
+})
