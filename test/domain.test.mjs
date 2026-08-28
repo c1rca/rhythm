@@ -7,6 +7,15 @@ test('weekly recurrence preserves the completion clock and finds the next due ti
   assert.equal(recurrence.nextDue('2026-08-20T14:30:00.000Z'), '2026-08-27T14:30:00.000Z')
 })
 
+test('frequency recurrence spaces a requested number of times through a week or day', () => {
+  const weekly = new Recurrence('times_week', 3)
+  const daily = new Recurrence('times_day', 4)
+  assert.equal(weekly.nextDue('2026-08-24T00:00:00.000Z'), '2026-08-26T08:00:00.000Z')
+  assert.equal(daily.nextDue('2026-08-24T00:00:00.000Z'), '2026-08-24T06:00:00.000Z')
+  assert.equal(weekly.label(), '3 times a week')
+  assert.equal(daily.label(), '4 times a day')
+})
+
 test('streak grows only when completion lands within its due window', () => {
   assert.equal(Recurrence.nextStreak({ streak: 3, dueAt: '2026-08-20T10:00:00.000Z', completedAt: '2026-08-20T09:00:00.000Z' }), 4)
   assert.equal(Recurrence.nextStreak({ streak: 3, dueAt: '2026-08-20T10:00:00.000Z', completedAt: '2026-08-22T10:00:00.000Z' }), 1)

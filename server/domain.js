@@ -1,6 +1,6 @@
 import { CronExpressionParser } from 'cron-parser'
 
-const MS = { daily: 86400000, weekly: 604800000, monthly: 2592000000 }
+const MS = { daily: 86400000, weekly: 604800000, monthly: 2592000000, times_week: 604800000, times_day: 86400000 }
 
 export class Recurrence {
   constructor(unit = 'weekly', interval = 1, customCron = '') {
@@ -14,9 +14,9 @@ export class Recurrence {
   }
   nextDue(completedAt) {
     if (this.unit === 'custom') return CronExpressionParser.parse(this.customCron, { currentDate: completedAt, tz: 'UTC' }).next().toISOString()
-    return new Date(new Date(completedAt).getTime() + MS[this.unit] * this.interval).toISOString()
+    return new Date(new Date(completedAt).getTime() + MS[this.unit] / (this.unit.startsWith('times_') ? this.interval : 1) * (this.unit.startsWith('times_') ? 1 : this.interval)).toISOString()
   }
-  label() { return this.unit === 'custom' ? this.customCron : `Every ${this.interval === 1 ? '' : `${this.interval} `}${this.unit.replace(/ly$/, '')}${this.interval === 1 ? 'y' : 's'}` }
+  label() { return this.unit === 'custom' ? this.customCron : this.unit === 'times_week' ? `${this.interval} times a week` : this.unit === 'times_day' ? `${this.interval} times a day` : `Every ${this.interval === 1 ? '' : `${this.interval} `}${this.unit.replace(/ly$/, '')}${this.interval === 1 ? 'y' : 's'}` }
   static nextStreak({ streak = 0, dueAt, completedAt }) { return new Date(completedAt).getTime() <= new Date(dueAt).getTime() + 86400000 ? streak + 1 : 1 }
 }
 const validTimezone = (timezone) => {
