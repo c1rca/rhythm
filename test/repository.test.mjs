@@ -120,6 +120,14 @@ test('timed scheduling retains its explicit instant and validates the household 
   assert.throws(() => taskInput({ ...sampleTask, timezone: 'Nope/Nowhere' }), /valid household timezone/)
 })
 
+test('dashboard treats a New York evening due time as today', () => {
+  fs.rmSync(dbPath, { force: true })
+  const repo = new SchedulerRepository(dbPath, 'America/New_York')
+  repo.create({ ...sampleTask, title: 'Numbers', dueAt: '2026-08-29T00:59:10.716Z' })
+  assert.deepEqual(repo.dashboard('2026-08-28T15:48:39.000Z').today.map(task => task.title), ['Numbers'])
+  fs.rmSync(dbPath, { force: true })
+})
+
 test('dashboard separates past due, today, and next using the household calendar day', () => {
   fs.rmSync(dbPath, { force: true })
   const repo = new SchedulerRepository(dbPath)

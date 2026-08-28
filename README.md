@@ -6,7 +6,7 @@ A fast, local-first recurring-task scheduler with streaks, history, custom cron 
 
 ```bash
 cp .env.example .env
-# Edit .env only if you want notifications or a non-default timezone.
+# Edit .env for notifications or set HOUSEHOLD_TIMEZONE (defaults to America/New_York).
 docker compose up -d --build
 ```
 

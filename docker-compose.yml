@@ -6,7 +6,7 @@ services:
     environment:
       PORT: "8091"
       DB_PATH: /app/data/scheduler.db
-      HOUSEHOLD_TIMEZONE: "${HOUSEHOLD_TIMEZONE:-UTC}"
+      HOUSEHOLD_TIMEZONE: "${HOUSEHOLD_TIMEZONE:-America/New_York}"
       GOTIFY_URL: "${GOTIFY_URL:-}"
       GOTIFY_TOKEN: "${GOTIFY_TOKEN:-}"
       SMTP_HOST: "${SMTP_HOST:-smtp.gmail.com}"
