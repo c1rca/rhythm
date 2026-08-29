@@ -24,6 +24,11 @@ test('all-day rhythms never expose their internal reminder hour and history dele
   assert.doesNotMatch(source, /A promise worth keeping\./)
 })
 
+test('history edit and delete controls occupy separate positions', () => {
+  const styles = fs.readFileSync(new URL('../src/palette.css', import.meta.url), 'utf8')
+  assert.match(styles, /\.history-delete:nth-last-child\(2\)\{right:36px\}/)
+})
+
 test('list rows hide the redundant chevron so details and streak controls never collide', () => {
   const styles = fs.readFileSync(new URL('../src/styles.css', import.meta.url), 'utf8')
   assert.match(styles, /\.task-list \.more\{display:none\}/)
