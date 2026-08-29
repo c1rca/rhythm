@@ -70,6 +70,14 @@ test('custom cron recurrence persists with the rhythm', () => {
   fs.rmSync(dbPath, { force: true })
 })
 
+test('editing a history entry updates only its recorded date and time', () => {
+  fs.rmSync(dbPath, { force: true }); const repo = new SchedulerRepository(dbPath); const task = repo.create(sampleTask)
+  repo.recordAction(task.id, 'skipped', '2026-08-20T10:00:00.000Z')
+  const entry = repo.history(task.id)[0]
+  assert.equal(repo.updateHistoryTime(task.id, entry.id, '2026-08-21T14:30:00.000Z').completed_at, '2026-08-21T14:30:00.000Z')
+  fs.rmSync(dbPath, { force: true })
+})
+
 test('deleting one history entry preserves the rhythm and other history', () => {
   fs.rmSync(dbPath, { force: true })
   const repo = new SchedulerRepository(dbPath)
